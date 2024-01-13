@@ -1,12 +1,16 @@
 import axios from 'axios';
 import Header from '../components/Header/Header';
 import Button from '../components/Button/Button';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { selectItemAtom, totalCountSelector, totalPriceSelector } from '../atom/selectItemAtom';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Order = () => {
   const [itemList, setItemList] = useState([]);
-  const [clickItem, setClickItem] = useState([]);
+  const [clickItem, setClickItem] = useRecoilState(selectItemAtom);
+  const totalCount = useRecoilValue(totalCountSelector);
+  const totalPrice = useRecoilValue(totalPriceSelector);
   const [active, setActive] = useState(false);
   const navigate = useNavigate();
 
@@ -26,12 +30,10 @@ const Order = () => {
   // 상품 수량 및 금액 체크
   const handleCountPrice = (item, type) => {
     setClickItem((prev) => {
-      const check = prev.findIndex((prev) => prev.id === item.id);
-
+      const check = prev.findIndex((el) => el.id === item.id);
       if (check !== -1) {
         const update = [...prev];
         const itemCount = update[check].count;
-
         if (type === 'plus' && itemCount < 999) {
           update[check] = { ...update[check], count: itemCount + 1 };
         }
@@ -46,10 +48,6 @@ const Order = () => {
       return [...prev, { id: item.id, count: 1, price: item.price }];
     });
   };
-
-  // 총 수량 및 금액 합산
-  const totalCount = clickItem.reduce((acc, item) => acc + item.count, 0);
-  const totalPrice = clickItem.reduce((acc, item) => acc + item.price, 0);
 
   const handleOrderButton = async () => {
     setActive(true);
