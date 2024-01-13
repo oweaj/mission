@@ -1,4 +1,8 @@
+import usePageTime from '../hook/usePageTime';
+
 const Error = () => {
+  usePageTime();
+
   return (
     <div className="afterOrder text-center">
       <p>
