@@ -2,10 +2,13 @@ import axios from 'axios';
 import Header from '../components/Header/Header';
 import Button from '../components/Button/Button';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Order = () => {
   const [itemList, setItemList] = useState([]);
-  const [count, setCount] = useState([]); // 인덱스로 시도해보기
+  const [clickItem, setClickItem] = useState([]);
+  const [active, setActive] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const data = async () => {
@@ -20,19 +23,60 @@ const Order = () => {
     data();
   }, []);
 
-  const handleCounting = (id, type) => {};
+  // 상품 수량 및 금액 체크
+  const handleCountPrice = (item, type) => {
+    setClickItem((prev) => {
+      const check = prev.findIndex((prev) => prev.id === item.id);
+
+      if (check !== -1) {
+        const update = [...prev];
+        const itemCount = update[check].count;
+
+        if (type === 'plus' && itemCount < 999) {
+          update[check] = { ...update[check], count: itemCount + 1 };
+        }
+        if (type === 'minus' && itemCount > 0) {
+          update[check] = { ...update[check], count: itemCount - 1 };
+        }
+        update[check].price = update[check].count * item.price;
+
+        return update;
+      }
+
+      return [...prev, { id: item.id, count: 1, price: item.price }];
+    });
+  };
+
+  // 총 수량 및 금액 합산
+  const totalCount = clickItem.reduce((acc, item) => acc + item.count, 0);
+  const totalPrice = clickItem.reduce((acc, item) => acc + item.price, 0);
+
+  const handleOrderButton = async () => {
+    setActive(true);
+    if (totalCount) {
+      navigate('/complete');
+    } else {
+      navigate('/error');
+    }
+  };
 
   return (
     <>
       <Header />
-      <div className="bg-white">
-        <div className="px-6 py-4">
-          {itemList.length ? (
-            <ul className="flex flex-col gap-4 p-2">
-              {itemList.map((item, index) => (
-                <li key={item.id} className="w-full h-20 flex gap-4 border rounded-[10px] p-[9px]">
-                  <div className="w-[62px] h-[62px] bg-home-color bg-opacity-40"></div>
-
+      <div className="h-[calc(100%-227px)] p-4 overflow-y-auto">
+        {itemList.length ? (
+          <ul className="flex flex-col gap-4 p-2">
+            {itemList.map((item) => {
+              const selectItem = clickItem.find((select) => select.id === item.id);
+              const selectCount = selectItem ? selectItem.count : 0;
+              return (
+                <li
+                  key={item.id}
+                  className={`w-full h-20 flex gap-4 border border-black border-opacity-30 rounded-[10px] p-[9px] ${
+                    selectCount >= 1 ? 'bg-order-color bg-opacity-10' : 'bg-white'
+                  }`}
+                >
+                  <div className="w-[62px] h-[62px] bg-home-color bg-opacity-40" />
                   <div className="flex-grow flex flex-col justify-between">
                     <div className="flex items-center gap-1">
                       <span>{item.name}</span>
@@ -42,39 +86,38 @@ const Order = () => {
                         </span>
                       ) : null}
                     </div>
-
                     <div className="flex justify-between">
-                      <div className="flex gap-3">
-                        <button type="button" onClick={handleCounting(index, 'plus')}>
+                      <div className="flex gap-2">
+                        <button type="button" onClick={() => handleCountPrice(item, 'minus')}>
                           -
                         </button>
-                        <span>{0}</span>
-                        <button type="button" onClick={handleCounting(index, 'minus')}>
+                        <span>{selectCount}</span>
+                        <button type="button" onClick={() => handleCountPrice(item, 'plus')}>
                           +
                         </button>
                       </div>
-                      <span className="">{item.price.toLocaleString()}원</span>
+                      <span>{item.price.toLocaleString()}원</span>
                     </div>
                   </div>
                 </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="centerStyle">
-              <p className="text-center">
-                목록을
-                <br /> 불러오고 있습니다.
-              </p>
-            </div>
-          )}
-        </div>
-        <div className="totalOrder">
-          <div className="flex flex-col items-end gap-[10px]">
-            <p>총 수량 : 0개</p>
-            <p>총 가격 : 0원</p>
+              );
+            })}
+          </ul>
+        ) : (
+          <div className="centerStyle">
+            <p className="text-center">
+              목록을
+              <br /> 불러오고 있습니다.
+            </p>
           </div>
-          <Button />
+        )}
+      </div>
+      <div className="totalOrder">
+        <div className="flex flex-col items-end gap-[10px]">
+          <p>총 수량 : {totalCount}개</p>
+          <p>총 가격 : {totalPrice.toLocaleString()}원</p>
         </div>
+        <Button count={totalCount} active={active} onClick={handleOrderButton} />
       </div>
     </>
   );
