@@ -1,18 +1,13 @@
 import axios from 'axios';
 import Header from '../components/Header/Header';
-import Button from '../components/Button/Button';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { selectItemAtom, totalCountSelector, totalPriceSelector } from '../atom/selectItemAtom';
+import { useRecoilState } from 'recoil';
+import { selectItemAtom } from '../atom/selectItemAtom';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import Total from '../components/Total/Total';
 
 const Order = () => {
   const [itemList, setItemList] = useState([]);
   const [clickItem, setClickItem] = useRecoilState(selectItemAtom);
-  const totalCount = useRecoilValue(totalCountSelector);
-  const totalPrice = useRecoilValue(totalPriceSelector);
-  const [active, setActive] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const data = async () => {
@@ -47,15 +42,6 @@ const Order = () => {
 
       return [...prev, { id: item.id, count: 1, price: item.price }];
     });
-  };
-
-  const handleOrderButton = async () => {
-    setActive(true);
-    if (totalCount) {
-      navigate('/complete');
-    } else {
-      navigate('/error');
-    }
   };
 
   return (
@@ -104,19 +90,12 @@ const Order = () => {
         ) : (
           <div className="centerStyle">
             <p className="text-center">
-              목록을
-              <br /> 불러오고 있습니다.
+              목록을 <br /> 불러오고 있습니다.
             </p>
           </div>
         )}
       </div>
-      <div className="totalOrder">
-        <div className="flex flex-col items-end gap-[10px]">
-          <p>총 수량 : {totalCount}개</p>
-          <p>총 가격 : {totalPrice.toLocaleString()}원</p>
-        </div>
-        <Button count={totalCount} active={active} onClick={handleOrderButton} />
-      </div>
+      <Total />
     </>
   );
 };
