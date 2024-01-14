@@ -13,7 +13,7 @@
     @apply h-full flex flex-col items-center justify-center;
   }
   .totalOrder {
-    @apply fixed bottom-0 w-full h-[170px] flex flex-col gap-[10px] justify-center px-[22px] rounded-t-[20px] bg-white;
+    @apply sticky bottom-0 w-full h-[170px] flex flex-col gap-[10px] justify-center px-[22px] rounded-t-[20px] bg-white;
     box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.25);
   }
 }

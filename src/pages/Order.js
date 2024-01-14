@@ -45,9 +45,9 @@ const Order = () => {
   };
 
   return (
-    <>
+    <div className="bg-white">
       <Header />
-      <div className="h-[calc(100%-227px)] p-4 overflow-y-auto">
+      <div className="px-6 py-4">
         {itemList.length ? (
           <ul className="flex flex-col gap-4 p-2">
             {itemList.map((item) => {
@@ -96,7 +96,7 @@ const Order = () => {
         )}
       </div>
       <Total />
-    </>
+    </div>
   );
 };
 
