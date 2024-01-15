@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { selectItemAtom, totalCountSelector, totalPriceSelector } from '../../atom/selectItemAtom';
-
-import Button from '../Button/Button';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -33,7 +31,14 @@ const Total = () => {
         <p>총 수량 : {totalCount}개</p>
         <p>총 가격 : {totalPrice.toLocaleString()}원</p>
       </div>
-      <Button count={totalCount} active={active} onClick={handleOrder} />
+      <button
+        type="submit"
+        className={`w-full h-[48px] text-white ${totalCount ? 'bg-black' : 'bg-order-button'}`}
+        disabled={totalCount ? false : true}
+        onClick={handleOrder}
+      >
+        {active ? '로딩중...' : '주문하기'}
+      </button>
     </div>
   );
 };
