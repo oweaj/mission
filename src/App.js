@@ -4,8 +4,6 @@ import Order from './pages/Order';
 import Complete from './pages/Complete';
 import Error from './pages/Error';
 
-// 전역상태관리 사용하기
-
 function App() {
   return (
     <div className="w-[350px] h-screen absolute left-1/2 -translate-x-1/2 text-lg bg-white">

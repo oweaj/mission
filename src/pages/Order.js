@@ -9,6 +9,7 @@ const Order = () => {
   const [itemList, setItemList] = useState([]);
   const [clickItem, setClickItem] = useRecoilState(selectItemAtom);
 
+  // 상품 목록 가져오기
   useEffect(() => {
     const data = async () => {
       try {
@@ -88,7 +89,7 @@ const Order = () => {
             })}
           </ul>
         ) : (
-          <div className="centerStyle">
+          <div className="orderLoding">
             <p className="text-center">
               목록을 <br /> 불러오고 있습니다.
             </p>
