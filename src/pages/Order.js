@@ -36,7 +36,7 @@ const Order = () => {
         if (type === 'minus' && itemCount > 0) {
           update[check] = { ...update[check], count: itemCount - 1 };
         }
-        update[check].price = update[check].count * item.price;
+        update[check] = { ...update[check], price: update[check].count * item.price };
 
         return update;
       }
